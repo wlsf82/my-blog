@@ -1,0 +1,64 @@
+<%- include('partials/head') %>
+
+<h1><%= heading %></h1>
+
+<% if (errors.length) { %>
+  <ul class="errors" data-test="errors">
+    <% errors.forEach(error => { %><li><%= error %></li><% }) %>
+  </ul>
+<% } %>
+
+<form method="post" action="<%= action %>" class="stack" data-test="post-form">
+  <label>
+    Title
+    <input type="text" name="title" value="<%= values.title || '' %>" data-test="title" />
+  </label>
+
+  <label>
+    Body
+    <textarea name="body" rows="8" data-test="body"><%= values.body || '' %></textarea>
+  </label>
+
+  <label>
+    Category
+    <select name="categoryId" data-test="category">
+      <option value="">No category</option>
+      <% categories.forEach(item => { %>
+        <option value="<%= item.id %>" <%= String(item.id) === String(values.categoryId) ? 'selected' : '' %>>
+          <%= item.name %>
+        </option>
+      <% }) %>
+    </select>
+  </label>
+  <p class="hint">
+    Missing one? <a href="/categories" data-test="add-category">Add a category</a>.
+  </p>
+
+  <label class="autocomplete">
+    Tags (comma separated)
+    <input
+      type="text"
+      name="tags"
+      value="<%= values.tags || '' %>"
+      placeholder="sql, beginners"
+      autocomplete="off"
+      role="combobox"
+      aria-expanded="false"
+      aria-controls="tag-suggestions"
+      data-test="tags"
+    />
+    <ul
+      id="tag-suggestions"
+      class="suggestions"
+      role="listbox"
+      hidden
+      data-test="tag-suggestions"
+    ></ul>
+  </label>
+
+  <button type="submit" data-test="submit">Save</button>
+</form>
+
+<script src="/tags.js"></script>
+
+<%- include('partials/foot') %>

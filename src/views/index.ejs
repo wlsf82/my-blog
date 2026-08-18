@@ -1,0 +1,108 @@
+<%- include('partials/head') %>
+
+<section class="filters">
+  <form method="get" action="/" data-test="filters">
+    <label>
+      Category
+      <select name="category" data-test="filter-category">
+        <option value="">All categories</option>
+        <% categories.forEach(item => { %>
+          <option value="<%= item.slug %>" <%= item.slug === category ? 'selected' : '' %>>
+            <%= item.name %> (<%= item.posts_count %>)
+          </option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>
+      Tag
+      <select name="tag" data-test="filter-tag">
+        <option value="">All tags</option>
+        <% tags.forEach(item => { %>
+          <option value="<%= item.slug %>" <%= item.slug === tag ? 'selected' : '' %>>
+            <%= item.name %> (<%= item.posts_count %>)
+          </option>
+        <% }) %>
+      </select>
+    </label>
+
+    <label>
+      Per page
+      <select name="perPage" data-test="per-page">
+        <% pagination.perPageOptions.forEach(option => { %>
+          <option value="<%= option %>" <%= option === pagination.perPage ? 'selected' : '' %>>
+            <%= option %>
+          </option>
+        <% }) %>
+      </select>
+    </label>
+
+    <button type="submit">Filter</button>
+    <% if (category || tag) { %>
+      <a class="clear" href="/" data-test="clear-filters">Clear</a>
+    <% } %>
+  </form>
+</section>
+
+<p class="count" data-test="posts-count">
+  <% if (pagination.total) { %>
+    Showing <%= pagination.from %>&ndash;<%= pagination.to %> of <%= pagination.total %>
+    post<%= pagination.total === 1 ? '' : 's' %>
+    <% if (pagination.pages > 1) { %>
+      &middot; page <%= pagination.page %> of <%= pagination.pages %>
+    <% } %>
+  <% } else { %>
+    0 posts
+  <% } %>
+</p>
+
+<ul class="posts" data-test="posts">
+  <% posts.forEach(post => { %>
+    <li class="post">
+      <h2><a href="/posts/<%= post.id %>"><%= post.title %></a></h2>
+      <p class="meta">
+        <% if (post.category_slug) { %>
+          <a class="chip category" href="/?category=<%= post.category_slug %>"><%= post.category_name %></a>
+        <% } %>
+        <% post.tags.forEach(item => { %>
+          <a class="chip tag" href="/?tag=<%= item.slug %>">#<%= item.name %></a>
+        <% }) %>
+      </p>
+      <p><%= excerpt(post.body) %></p>
+      <p class="actions">
+        <a href="/posts/<%= post.id %>" data-test="read-more">Read more</a>
+        <a href="/posts/<%= post.id %>/edit" data-test="edit">Edit</a>
+      </p>
+    </li>
+  <% }) %>
+</ul>
+
+<% if (pagination.pages > 1) { %>
+  <nav class="pagination" aria-label="Pagination" data-test="pagination">
+    <% if (pagination.page > 1) { %>
+      <a href="<%= pagination.hrefFor(pagination.page - 1) %>" rel="prev" data-test="previous-page">&larr; Previous</a>
+    <% } else { %>
+      <span class="disabled">&larr; Previous</span>
+    <% } %>
+
+    <% for (let number = 1; number <= pagination.pages; number++) { %>
+      <% if (number === pagination.page) { %>
+        <span class="current" aria-current="page" data-test="current-page"><%= number %></span>
+      <% } else { %>
+        <a href="<%= pagination.hrefFor(number) %>" data-test="page-<%= number %>"><%= number %></a>
+      <% } %>
+    <% } %>
+
+    <% if (pagination.page < pagination.pages) { %>
+      <a href="<%= pagination.hrefFor(pagination.page + 1) %>" rel="next" data-test="next-page">Next &rarr;</a>
+    <% } else { %>
+      <span class="disabled">Next &rarr;</span>
+    <% } %>
+  </nav>
+<% } %>
+
+<% if (!posts.length) { %>
+  <p class="empty" data-test="no-posts">No posts match these filters.</p>
+<% } %>
+
+<%- include('partials/foot') %>

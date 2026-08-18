@@ -1,0 +1,32 @@
+<%- include('partials/head') %>
+
+<h1>Categories</h1>
+
+<% if (errors.length) { %>
+  <ul class="errors" data-test="errors">
+    <% errors.forEach(error => { %><li><%= error %></li><% }) %>
+  </ul>
+<% } %>
+
+<form method="post" action="/categories" class="inline-form" data-test="category-form">
+  <label>
+    New category
+    <input type="text" name="name" value="<%= values.name || '' %>" placeholder="Performance" data-test="name" />
+  </label>
+  <button type="submit" data-test="submit">Add</button>
+</form>
+
+<ul class="categories" data-test="categories">
+  <% categories.forEach(item => { %>
+    <li>
+      <a href="/?category=<%= item.slug %>"><%= item.name %></a>
+      <span class="muted"><%= item.posts_count %> post<%= item.posts_count === 1 ? '' : 's' %></span>
+    </li>
+  <% }) %>
+</ul>
+
+<% if (!categories.length) { %>
+  <p class="empty" data-test="no-categories">No categories yet.</p>
+<% } %>
+
+<%- include('partials/foot') %>

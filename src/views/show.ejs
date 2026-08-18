@@ -1,0 +1,30 @@
+<%- include('partials/head') %>
+
+<article class="post" data-test="post">
+  <h1><%= post.title %></h1>
+  <p class="meta">
+    <% if (post.category_slug) { %>
+      <a class="chip category" href="/?category=<%= post.category_slug %>"><%= post.category_name %></a>
+    <% } %>
+    <% post.tags.forEach(item => { %>
+      <a class="chip tag" href="/?tag=<%= item.slug %>">#<%= item.name %></a>
+    <% }) %>
+  </p>
+  <p class="post-body"><%= post.body %></p>
+
+  <div class="actions">
+    <a class="button" href="/posts/<%= post.id %>/edit" data-test="edit">Edit</a>
+    <form
+      method="post"
+      action="/posts/<%= post.id %>/delete"
+      onsubmit="return confirm('Delete this post?')"
+      data-test="delete-form"
+    >
+      <button type="submit" class="danger" data-test="delete">Delete</button>
+    </form>
+  </div>
+
+  <p><a href="/">&larr; Back to all posts</a></p>
+</article>
+
+<%- include('partials/foot') %>
